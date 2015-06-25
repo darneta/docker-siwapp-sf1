@@ -27,7 +27,7 @@ Step 1. Launch a mysql container
 docker run --name=mysql-siwapp -d \
   --env='DB_NAME=siwapp' \
   --env='DB_USER=siwapp' --env='DB_PASS=password' \
-  --volume=/srv/docker/redmine/mysql:/var/lib/mysql \
+  --volume=/srv/docker/siwapp/mysql:/var/lib/mysql \
   sameersbn/mysql:latest
 ```
 
