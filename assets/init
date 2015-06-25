@@ -1,0 +1,48 @@
+#!/bin/bash
+set -e
+
+rm /app/config/databases.yml
+cp /app/container/databases.yml /app/config/databases.yml
+
+DB_HOST=${DB_HOST:-}
+DB_PORT=${DB_PORT:-}
+DB_NAME=${DB_NAME:-}
+DB_USER=${DB_USER:-}
+DB_PASS=${DB_PASS:-}
+
+if [ -n "${MYSQL_PORT_3306_TCP_ADDR}" ]; then
+	DB_HOST=${DB_HOST:-${MYSQL_PORT_3306_TCP_ADDR}}
+	DB_PORT=${DB_PORT:-${MYSQL_PORT_3306_TCP_PORT}}
+
+	# support for linked sameersbn/mysql image
+	DB_USER=${DB_USER:-${MYSQL_ENV_DB_USER}}
+	DB_PASS=${DB_PASS:-${MYSQL_ENV_DB_PASS}}
+	DB_NAME=${DB_NAME:-${MYSQL_ENV_DB_NAME}}
+fi
+
+sudo sed 's/{{DB_HOST}}/'"${DB_HOST}"'/' -i /app/config/databases.yml
+sudo sed 's/{{DB_PORT}}/'"${DB_PORT}"'/' -i /app/config/databases.yml
+sudo sed 's/{{DB_NAME}}/'"${DB_NAME}"'/' -i /app/config/databases.yml
+sudo sed 's/{{DB_USER}}/'"${DB_USER}"'/' -i /app/config/databases.yml
+sudo sed 's/{{DB_PASS}}/'"${DB_PASS}"'/' -i /app/config/databases.yml
+
+count="select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = '${DB_NAME}'"
+mysql -h ${DB_HOST} --port=${DB_PORT} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} -e "$count" > /tmp/status.txt
+stat=`cat /tmp/status.txt | tail -1`
+rm -rf /tmp/status.txt
+if [ "$stat" != "0" ]; then
+	rm /app/web/config.php
+	cp /app/container/config.php /app/web/config.php
+fi
+
+mkdir -p /app/cache
+chown www-data:www-data /app -R
+chmod -R 0766 /app/cache
+chmod 0766 /app/web/config.php
+
+sed -i "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
+a2enmod rewrite
+
+source /etc/apache2/envvars
+tail -F /var/log/apache2/* &
+exec apache2 -D FOREGROUND
