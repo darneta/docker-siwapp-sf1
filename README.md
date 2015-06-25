@@ -31,16 +31,30 @@ docker run --name=mysql-siwapp -d \
   sameersbn/mysql:latest
 ```
 
-Step 2. Launch a siwapp container
+Step 2. Launch a postfix container
+
+```bash
+docker run -d --name siwapp-postfix \
+ --env="maildomain=your_domain.com" \
+ --env="smtp_user=siwapp:siwapp" \
+ catatnight/postfix
+```
+
+Step 3. Launch a siwapp container
 
 ```bash
 sudo docker run --name=siwapp -d \
   --link=mysql-siwapp:mysql \
+  --link=siwapp-postfix:postfix \
+  --env="SMTP_USER=siwapp" \
+  --env="SMTP_PASS=siwapp" \
+  --env="SMTP_HOST=postfix" \
+  --env="SMTP_PORT=25" \
   --publish=10080:80 \
   darneta/siwapp-sf1
 ```
 
-Step 3. Install siwapp (if not already installed)
+Step 4. Install siwapp (if not already installed)
 
 Point your browser to `http://localhost:10080` and complete the installation. Database prameters will be set from mysql container so just click next.
 
@@ -53,3 +67,7 @@ Point your browser to `http://localhost:10080` and complete the installation. Da
 - **DB_NAME**: The database name.
 - **DB_USER**: The database user.
 - **DB_PASS**: The database password.
+- **SMTP_USER**: The SMTP user.
+- **SMTP_PASS**: The SMTP pass.
+- **SMTP_HOST**: The SMTP host.
+- **SMTP_PORT**: The SMTP port.
