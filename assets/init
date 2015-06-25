@@ -43,6 +43,8 @@ chmod 0766 /app/web/config.php
 sed -i "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 a2enmod rewrite
 
+rm -rf /app/cache/*
+
 source /etc/apache2/envvars
 tail -F /var/log/apache2/* &
 exec apache2 -D FOREGROUND
