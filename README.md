@@ -5,7 +5,7 @@ Docker container for siwapp sf1
 
 Dockerfile to build a [siwapp](http://www.siwapp.org/) container image.
 
-**Warning!** It uses not official siwapp branch (fork) [darneta/siwapp-sf1](http://github.com/darneta/siwapp-sf1) due to easy setup support.
+**Warning!** It uses non-official siwapp branch (fork) [darneta/siwapp-sf1](http://github.com/darneta/siwapp-sf1) due to easy setup support and various modifications.
 
 ## Version
 
