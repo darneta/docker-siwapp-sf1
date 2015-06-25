@@ -20,7 +20,6 @@ RUN apt-get update && \
 	mysql-common \
         php-pear \
 	unzip \
-	sendmail \
 	wget \
         php-apc && \
     rm -rf /var/lib/apt/lists/* && \
