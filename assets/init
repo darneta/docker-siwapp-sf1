@@ -4,11 +4,19 @@ set -e
 rm /app/config/databases.yml
 cp /app/container/databases.yml /app/config/databases.yml
 
+rm /app/apps/siwapp/config/factories.yml
+cp /app/container/factories.yml /app/apps/siwapp/config/factories.yml
+
 DB_HOST=${DB_HOST:-}
 DB_PORT=${DB_PORT:-}
 DB_NAME=${DB_NAME:-}
 DB_USER=${DB_USER:-}
 DB_PASS=${DB_PASS:-}
+
+SMTP_HOST=${SMTP_HOST:-}
+SMTP_PORT=${SMTP_PORT:-}
+SMTP_USER=${SMTP_USER:-}
+SMTP_PASS=${SMTP_PASS:-}
 
 if [ -n "${MYSQL_PORT_3306_TCP_ADDR}" ]; then
 	DB_HOST=${DB_HOST:-${MYSQL_PORT_3306_TCP_ADDR}}
@@ -25,6 +33,11 @@ sudo sed 's/{{DB_PORT}}/'"${DB_PORT}"'/' -i /app/config/databases.yml
 sudo sed 's/{{DB_NAME}}/'"${DB_NAME}"'/' -i /app/config/databases.yml
 sudo sed 's/{{DB_USER}}/'"${DB_USER}"'/' -i /app/config/databases.yml
 sudo sed 's/{{DB_PASS}}/'"${DB_PASS}"'/' -i /app/config/databases.yml
+
+sudo sed 's/{{SMTP_HOST}}/'"${SMTP_HOST}"'/' -i /app/apps/siwapp/config/factories.yml
+sudo sed 's/{{SMTP_PORT}}/'"${SMTP_PORT}"'/' -i /app/apps/siwapp/config/factories.yml
+sudo sed 's/{{SMTP_USER}}/'"${SMTP_USER}"'/' -i /app/apps/siwapp/config/factories.yml
+sudo sed 's/{{SMTP_PASS}}/'"${SMTP_PASS}"'/' -i /app/apps/siwapp/config/factories.yml
 
 count="select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = '${DB_NAME}'"
 mysql -h ${DB_HOST} --port=${DB_PORT} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} -e "$count" > /tmp/status.txt
