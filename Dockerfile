@@ -38,9 +38,8 @@ RUN ln -s /app/web /var/www/html
 
 VOLUME ["/app/web/uploads"]
 
-RUN cron
 RUN touch mycron
-RUN echo "*/15 * * * * /usr/bin/php /app/symfony siwapp:create-pending-invoices" >> mycron
+RUN echo "*/15 * * * * /usr/bin/php /app/symfony siwapp:create-pending-invoices >/dev/null 2>&1" >> mycron
 RUN crontab mycron
 RUN rm mycron
 
