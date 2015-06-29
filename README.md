@@ -43,7 +43,7 @@ docker run -d --name siwapp-postfix \
 Step 3. Launch a siwapp container
 
 ```bash
-sudo docker run --name=siwapp -d \
+docker run --name=siwapp -d \
   --link=mysql-siwapp:mysql \
   --link=siwapp-postfix:postfix \
   --env="SMTP_USER=siwapp" \
