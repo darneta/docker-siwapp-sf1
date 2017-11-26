@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+
+  db:
+    image: sameersbn/mysql:latest
+    restart: unless-stopped
+    environment:
+      DB_NAME: siwapp
+      DB_USER: siwapp
+      DB_PASS: password
+    volumes:
+     - /var/lib/mysql
+
+  postfix:
+    image: catatnight/postfix
+    restart: unless-stopped
+    environment:
+      maildomain: your_domain.com
+      smtp_user: siwapp:siwapp
+
+  siwapp:
+    image: darneta/siwapp-sf1
+    restart: unless-stopped
+    links:
+      - db:db
+      - postfix:postfix
+    environment:
+      DB_HOST: db
+      DB_NAME: siwapp
+      DB_USER: siwapp
+      DB_PASS: password
+      SMTP_USER: siwapp
+      SMTP_PASS: siwapp
+      SMTP_HOST: postfix
+      SMTP_PORT: 25
+    expose:
+      - 80
+    ports:
+      - 80
+

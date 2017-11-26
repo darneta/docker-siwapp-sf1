@@ -39,6 +39,12 @@ sudo sed 's/{{SMTP_PORT}}/'"${SMTP_PORT}"'/' -i /app/apps/siwapp/config/factorie
 sudo sed 's/{{SMTP_USER}}/'"${SMTP_USER}"'/' -i /app/apps/siwapp/config/factories.yml
 sudo sed 's/{{SMTP_PASS}}/'"${SMTP_PASS}"'/' -i /app/apps/siwapp/config/factories.yml
 
+echo "Waiting for mysql"
+while ! mysqladmin ping -h"${DB_HOST}" -u "${DB_USER}" -p"${DB_PASS}" --silent; do
+	echo ".";    
+	sleep 1
+done
+
 count="select count(*) from information_schema.tables where table_type = 'BASE TABLE' and table_schema = '${DB_NAME}'"
 mysql -h ${DB_HOST} --port=${DB_PORT} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} -e "$count" > /tmp/status.txt
 stat=`cat /tmp/status.txt | tail -1`
