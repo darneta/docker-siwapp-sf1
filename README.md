@@ -21,7 +21,11 @@ docker pull darneta/siwapp-sf1:latest
 
 # Quick Start
 
-Step 1. Start all container
+Step 1. Start containers
+
+```bash
+wget https://raw.githubusercontent.com/darneta/docker-siwapp-sf1/master/docker-compose.yml
+```
 
 ```bash
 docker-compose up
